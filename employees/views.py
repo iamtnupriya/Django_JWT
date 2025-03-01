@@ -3,13 +3,12 @@ from rest_framework import views
 from rest_framework.response import Response
 from rest_framework.views import APIView
 # from .Serializers import EmployeeSerializer
-from .models import Employee
+from .models import User,Employee
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
-from .Serializers import RegisterSerializer, LoginSerializer, UserSerializer
+from .Serializers import RegisterSerializer, LoginSerializer, UserSerializer,DepartmentSerializer,DesignationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -30,9 +29,9 @@ class RegisterViews(generics.CreateAPIView):
 class LoginViews(APIView):
     serializer_class = LoginSerializer
     def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
+        email = request.data.get('email')
         password = request.data.get('password')
-        user = authenticate(username=username , password=password)
+        user = authenticate(email=email , password=password)
         
         if user is not None:
             refresh = RefreshToken.for_user(user)
@@ -46,6 +45,17 @@ class LoginViews(APIView):
             return Response({'detail': 'invalid credentials'})
 
 
+class DesignationViews(APIView):
+    def get(self, request):
+        all_data = Employee.objects.all()
+        designation_detail_serializer = DesignationSerializer(all_data , many=True)
+        return Response(designation_detail_serializer.data)
+    
+class DepartmentViews(APIView):
+    def get(self, request):
+        all_data = Employee.objects.all()
+        department_detail_serializer = DepartmentSerializer(all_data , many=True)
+        return Response(department_detail_serializer.data)
 
 
 
