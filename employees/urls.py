@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import EmployeeViews
-from .views import RegisterViews,LoginViews,DepartmentViews,DesignationViews
+from .views import RegisterViews,LoginViews,DepartmentViews,DesignationViews,S3BucketView
 
 
 urlpatterns = [
@@ -9,5 +9,6 @@ urlpatterns = [
     path('Login/', LoginViews.as_view(), name='Login-detail'),
     path('Department/', DepartmentViews.as_view(), name='Department-detail'),
     path('Designation/', DesignationViews.as_view(), name='Designation-detail'),
+    path('Get_S3/', S3BucketView.as_view(),name='S3-Bucket-detail'),
 ]
 

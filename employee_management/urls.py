@@ -23,9 +23,9 @@ from employees.views import RegisterViews, LoginViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('employees.urls')), 
-    path('api/register/', RegisterViews.as_view(), name='register'), 
-    path('api/login/', LoginViews.as_view(), name='login'), 
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include('employees.urls')), 
+    # path('api/register/', RegisterViews.as_view(), name='register'), 
+    # path('api/login/', LoginViews.as_view(), name='login'), 
+    # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

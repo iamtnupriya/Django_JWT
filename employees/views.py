@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from .Serializers import RegisterSerializer, LoginSerializer, UserSerializer,DepartmentSerializer,DesignationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.conf import settings
+import boto3
 
 # Create your views here.
 class EmployeeViews(APIView):
@@ -58,5 +60,31 @@ class DepartmentViews(APIView):
         return Response(department_detail_serializer.data)
 
 
+# THIS API WILL GIVE THE ITEMS PRESENT IN THE S3 BUCKET
+
+class S3BucketView(APIView):
+   s3_client = boto3.client(
+    's3',
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    region_name=settings.AWS_S3_REGION_NAME
+    )
+   def get(self,request):
+            #access all the bucket names
+            s3_bucket = self.s3_client.list_buckets()
+            # s3_bucket_name = s3_bucket['Buckets']  
+            s3_bucket_names = [bucket_name['Name'] for bucket_name in s3_bucket.get('Buckets' , [])] 
+
+            #access content of the buckets
+            Content = {}
+            for s3_bucket_name in s3_bucket_names:
+                s3_content = self.s3_client.list_objects_v2(Bucket = s3_bucket_name)
+                Content[s3_bucket_name] = [contents['Key'] for contents in s3_content.get('Contents' , [])]
+
+            return Response({
+                "Bucket_name":s3_bucket_name,
+                "Content": Content
+            })
 
 
+     
