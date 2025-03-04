@@ -48,14 +48,24 @@ class LoginViews(APIView):
 
 
 class DesignationViews(APIView):
-    def get(self, request):
+    def post(self, request):
         all_data = Employee.objects.all()
+        input_designation=request.data.get('designation')
+        designations=Employee.objects.filter(designation=input_designation)
+        if input_designation is not None:
+            designation_detail_serializer = DesignationSerializer(designations, many=True)
+            return Response(designation_detail_serializer.data)
         designation_detail_serializer = DesignationSerializer(all_data , many=True)
         return Response(designation_detail_serializer.data)
     
 class DepartmentViews(APIView):
-    def get(self, request):
+    def post(self, request):
         all_data = Employee.objects.all()
+        input_department=request.data.get('department')
+        department=Employee.objects.filter(department=input_department)
+        if input_department is not None:
+            department_detail_serializer = DepartmentSerializer(department, many=True)
+            return Response(department_detail_serializer.data)
         department_detail_serializer = DepartmentSerializer(all_data , many=True)
         return Response(department_detail_serializer.data)
 
