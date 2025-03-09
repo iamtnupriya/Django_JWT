@@ -97,4 +97,43 @@ class S3BucketView(APIView):
             })
 
 
+# THIS API WILL GIVE NAME OF ALL THE EC2 PRESENT
+
+class EC2InstanceView(APIView):
+    ec2_client = boto3.client(
+        'ec2',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_S3_REGION_NAME
+    )
+    def post(self,request):
+        ec2 = self.ec2_client.describe_instances()
+        ec2_description = request.data.get('description')
+        instances=[]
+        instances_with_description =[]
+        instance_name = ""
+        for reservation in ec2['Reservations']:
+            for instance_data in reservation['Instances']:
+                if 'Tags' in instance_data:
+                    for tag in instance_data['Tags']:
+                        if tag['Key'] == 'Name':
+                                instance_name = tag['Value']
+                                break
+            Instance_id=instance_data['InstanceId']
+            instances_with_description.append({
+                "Instance-name": instance_name,
+                "Instance-id" : Instance_id,
+                "Instance-Discription" : ec2
+            })
+            instances.append({
+                "Instance-name": instance_name,
+                "Instance-id" : Instance_id,
+
+            })
+        if ec2_description is not None:
+            return Response(instances_with_description)
+        else:
+            return Response(instances)
+
+
      
